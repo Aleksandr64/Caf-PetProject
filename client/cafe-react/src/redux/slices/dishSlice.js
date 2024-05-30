@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import {persistReducer} from "redux-persist";
+import storage from "redux-persist/lib/storage";
 
 const initialState = {
   dishes: [],
@@ -16,4 +18,13 @@ export const dishSlice = createSlice({
 
 export const { setAllDish } = dishSlice.actions;
 
-export default dishSlice.reducer;
+const dishReducer = persistReducer(
+  {
+    key: "dishes",
+    storage: storage,
+    whitelist: ["dishes"], // Список ключів, які ви хочете зберегти
+  },
+  dishSlice.reducer,
+);
+
+export default dishReducer;

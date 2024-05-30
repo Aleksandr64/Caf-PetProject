@@ -49,9 +49,12 @@ public class AuthorizationRoleAttribute : ActionFilterAttribute, IAuthorizationF
 
     public override void OnActionExecuting(ActionExecutingContext context)
     {
-        if (context.HttpContext.Items.TryGetValue(HttpContextItems.USERNAME_ITEM, out var userName))
+        if (!context.ActionArguments.ContainsKey("userName") || context.ActionArguments["userName"] == null)
         {
-            context.ActionArguments["userName"] = userName;
+            if (context.HttpContext.Items.TryGetValue(HttpContextItems.USERNAME_ITEM, out var userName))
+            {
+                context.ActionArguments["userName"] = userName;
+            }
         }
         base.OnActionExecuting(context);
     }

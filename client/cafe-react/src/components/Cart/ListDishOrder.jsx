@@ -7,12 +7,12 @@ export default function ListDishOrder() {
   const orderList = useSelector((state) => state.cart.orderItems);
 
   return (
-    <div  className={styles}>
-      <h2>
+    <div>
+      <h2 className={styles.title}>
         DishList
       </h2>
       {orderList.length === 0 ? (
-        <h3>
+        <h3 className={styles.content}>
           Cart Empty
         </h3>
       ) : (

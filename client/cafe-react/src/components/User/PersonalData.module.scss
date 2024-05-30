@@ -1,0 +1,14 @@
+.grid{
+  display: grid;
+  gap: 0 15px;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (max-width: 900px) {
+  .grid{
+    grid-template-columns: 1fr;
+  }
+}
+
+input{
+  font-size: 18px;
+}

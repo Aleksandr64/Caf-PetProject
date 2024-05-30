@@ -14,6 +14,7 @@ public class TestController : BaseApiController
 
     [HttpGet]
     [AuthorizationRole]
+    [UserNameInjection]
     public IActionResult TestAuthAttribute(string? userName)
     {
         return Ok(new { message = $"User: {userName}  Authorize!" });

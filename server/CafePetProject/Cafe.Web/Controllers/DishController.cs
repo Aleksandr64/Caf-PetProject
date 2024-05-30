@@ -25,7 +25,7 @@ public class DishController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDishById(Guid id, string test, string testing)
+    public async Task<IActionResult> GetDishById(int id, string test, string testing)
     {
         var result = await _dishService.GetDishById(id);
         return this.GetResponse(result);
@@ -46,7 +46,7 @@ public class DishController : BaseApiController
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeleteById(Guid id)
+    public async Task<IActionResult> DeleteById(int id)
     {
         var result = await _dishService.DeleteById(id);
         return this.GetResponse(result);

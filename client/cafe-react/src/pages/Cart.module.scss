@@ -1,12 +1,12 @@
 .container{
-  padding: 0 30px;
+  padding: 0 5%;
   .gridContainer {
     display: grid;
     gap: 10px 100px;
   }
 }
 
-@media (min-width: 1086px) {
+@media (min-width: 1050px) {
   .gridContainer {
     grid-template-columns:  1fr 2fr;
     .item1 {
@@ -20,9 +20,8 @@
 
 }
 
-@media (max-width: 1086px) {
+@media (max-width: 1050px) {
   .container{
-    padding: 0;
     .gridContainer {
       grid-template-columns: repeat(1, 1fr);
       .item1 {

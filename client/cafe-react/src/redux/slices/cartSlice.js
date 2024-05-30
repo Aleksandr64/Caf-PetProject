@@ -39,11 +39,14 @@ export const cartSlice = createSlice({
       state.emailAddress = "";
       state.totalAmount = 0;
       state.orderItems = [];
-    },
+    }
   },
 });
-
-export const { addDish, setInputValue, resetCart } = cartSlice.actions;
+export const {
+  addDish,
+  setInputValue,
+  resetCart
+} = cartSlice.actions;
 
 const cartReducer = persistReducer(
   {

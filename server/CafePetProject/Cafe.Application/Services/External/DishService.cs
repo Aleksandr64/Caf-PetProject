@@ -29,7 +29,7 @@ public class DishService : IDishService
 
         return new SuccessResult<IEnumerable<Dish>>(result);
     }
-    public async Task<Result<Dish>> GetDishById(Guid  id)
+    public async Task<Result<Dish>> GetDishById(int  id)
     {
         var result = await _dishRepository.GetDishById(id);
 
@@ -63,7 +63,7 @@ public class DishService : IDishService
         return new SuccessResult<string>(null);
     }
 
-    public async Task<Result<string>> DeleteById(Guid id)
+    public async Task<Result<string>> DeleteById(int id)
     {
         var result = await _dishRepository.DeleteDishById(id);
 

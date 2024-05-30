@@ -3,13 +3,14 @@ using System.Security.Cryptography;
 using System.Text;
 using Cafe.Application.DTOs.UserDTOs;
 using Cafe.Application.DTOs.UserDTOs.Request;
-using Cafe.Application.DTOs.UserDTOs.Responce;
+using Cafe.Application.DTOs.UserDTOs.Response;
 using Cafe.Application.Mappers;
 using Cafe.Application.Services.Inteface;
 using Cafe.Application.Services.Internal.Interface;
 using Cafe.Application.Validations.Auth;
 using Cafe.Domain;
 using Cafe.Domain.ResultModels;
+using Cafe.Infrastructure.Repository.Interface;
 using Cafe.Infrustructure.Repositoriy.Interface;
 
 namespace Cafe.Application.Services.External;

@@ -3,5 +3,5 @@
 public class AddOrderItemRequest
 {
     public int Quantity { get; set; }
-    public Guid DishId { get; set; }
+    public int DishId { get; set; }
 }

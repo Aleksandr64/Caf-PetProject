@@ -8,8 +8,8 @@ public class PutDishValidator : AbstractValidator<PutDishRequest>
     public PutDishValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Id must not be empty.")
-            .Must(BeValidGuid).WithMessage("Id must be a valid GUID.");
+            .NotEmpty().WithMessage("ID не може бути порожнім")
+            .Must(BeAnInteger).WithMessage("ID повинен бути цілим числом");
         
         RuleFor(x => x.Title)
             .NotEmpty().WithMessage("Title must not be empty.")
@@ -30,8 +30,8 @@ public class PutDishValidator : AbstractValidator<PutDishRequest>
     {
         return string.IsNullOrWhiteSpace(url) || Uri.TryCreate(url, UriKind.Absolute, out _);
     }
-    private bool BeValidGuid(Guid guid)
+    private bool BeAnInteger(int id)
     {
-        return guid != Guid.Empty;
+        return id >= 0;
     }
 }
