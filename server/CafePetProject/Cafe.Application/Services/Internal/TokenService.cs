@@ -22,7 +22,7 @@ public class TokenService : ITokenService
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
-            expires: DateTime.UtcNow.AddMinutes(10),
+            expires: DateTime.UtcNow.AddMinutes(1),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
@@ -78,12 +78,12 @@ public class TokenService : ITokenService
     }
     public string GetUsernameFromToken(ClaimsPrincipal principal)
     {
-        var username = principal.FindFirst(ClaimTypes.Name);
+        var username = principal.FindFirst("userName");
         return username.Value;
     }
     public string GetRoleFromToken(ClaimsPrincipal principal)
     {
-        var role = principal.FindFirst(ClaimTypes.Role);
+        var role = principal.FindFirst("role");
         return role.Value;
     }
 }

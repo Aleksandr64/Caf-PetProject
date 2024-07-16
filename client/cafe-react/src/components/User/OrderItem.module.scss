@@ -1,0 +1,88 @@
+.myCard {
+  height: 100%;
+  max-width: 100%;
+  margin: 2% 6px;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px 2px rgba(0, 0, 0, 0.15);
+  transition: 0.3s;
+  display: flex;
+
+  .content {
+    display: flex;
+    flex: 0 0 auto;
+
+    .leftColumn, .rightColumn {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 10px;
+
+      p {
+        height: 40%;
+        align-items: center;
+        margin: 2px 0;
+      }
+    }
+  }
+
+  .listDish {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    margin-left: auto;
+    margin-right: 3%;
+    padding: 10px;
+    overflow: hidden;
+
+    .dishItem {
+      display: flex;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      padding: 10px 0;
+
+      .price {
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+@media (min-width: 730px) and (max-width: 900px) {
+  .myCard {
+    .content {
+      flex-direction: column;
+    }
+  }
+}
+
+@media (max-width: 729px) {
+  .myCard {
+    flex-direction: column;
+
+    .content {
+      justify-content: space-between;
+      width: 100%;
+      .rightColumn{
+        p{
+          word-break: break-all;
+          overflow-wrap: break-word;
+          hyphens: auto;
+        }
+      }
+    }
+
+    .listDish {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+      .dishItem{
+        .price{
+          padding-right: 20px;
+        }
+      }
+    }
+  }
+}

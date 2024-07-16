@@ -1,59 +1,69 @@
-.container{
+.container {
   padding: 0 10%;
-  h1{
+
+  h1 {
     text-align: center;
   }
-  .description{
+
+  .description {
     display: flex;
     text-align: center;
     font-size: 24px;
     font-weight: bold;
   }
-  .account{
+
+  .account {
     margin-top: 2rem;
     border-bottom: 3px solid black;
     cursor: pointer;
-    svg{
+
+    svg {
       font-size: 25px;
       margin: 0 10px;
     }
-    .title{
+
+    .title {
       display: flex;
       align-items: center;
-      h3{
+
+      h3 {
         font-size: 1.8rem;
         margin: 0;
       }
-      .arrowButton{
+
+      .arrowButton {
         display: flex;
         margin-left: auto;
         transition: transform 0.5s ease-in;
       }
     }
-    .content{
+
+    .content {
       max-height: 0;
       overflow: hidden;
       margin: 10px 10px;
       transition: max-height 1s ease;
 
-      p{
+      p {
         margin: 0;
-        padding-top: 1rem;
         line-height: 1.6;
         font-size: 1.4rem;
       }
     }
   }
-  .active{
-    .title{
-      .arrowButton{
+
+  .active {
+    .title {
+      .arrowButton {
         transform: rotate(180deg);
       }
     }
   }
-  .boxWrapper{
+
+  .boxWrapper {
     padding: 40px 10px;
-    .buttonWidth{
+
+    .buttonWidth {
     }
   }
 }

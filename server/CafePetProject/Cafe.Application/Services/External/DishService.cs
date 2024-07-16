@@ -1,10 +1,13 @@
-﻿using Cafe.Application.DTOs.DishDTOs.Request;
+﻿using System.Net;
+using Cafe.Application.DTO.DishDTOs.Request;
+using Cafe.Application.DTOs.DishDTOs.Request;
 using Cafe.Application.Mappers;
-using Cafe.Application.Services.Inteface;
+using Cafe.Application.Services.External.Interface;
 using Cafe.Application.Validations;
 using Cafe.Application.Validations.Dish;
 using Cafe.Domain;
-using Cafe.Domain.ResultModels;
+using Cafe.Domain.Exceptions;
+using Cafe.Infrastructure.Repository.Interface;
 using Cafe.Infrustructure.Repositoriy.Interface;
 
 namespace Cafe.Application.Services.External;
@@ -18,60 +21,57 @@ public class DishService : IDishService
         _dishRepository = dishRepository;
     }
 
-    public async Task<Result<IEnumerable<Dish>>> GetAllDish()
+    public async Task<IEnumerable<Dish>> GetAllDish()
     {
         var result = await _dishRepository.GetAllDish();
 
         if (result == null)
         {
-            return new NotFoundResult<IEnumerable<Dish>>("Error or no dishes in the database");
+            throw new ApiException(HttpStatusCode.NotFound,"Error or no dishes in the database");
         }
 
-        return new SuccessResult<IEnumerable<Dish>>(result);
+        return result;
     }
-    public async Task<Result<Dish>> GetDishById(int  id)
+    public async Task<Dish> GetDishById(int  id)
     {
         var result = await _dishRepository.GetDishById(id);
 
         if (result == null)
         {
-            return new NotFoundResult<Dish>("Failed get Dish by Id");
+            throw new ApiException(HttpStatusCode.NotFound,"Failed get Dish by Id");
         }
-        
-        return new SuccessResult<Dish>(result);
+        return result;
     }
 
-    public async Task<Result<string>> AddNewDish(AddDishRequest dish)
+    public async Task AddNewDish(AddDishRequest dish)
     {
         var validationResult = await new AddDishValidator().ValidateAsync(dish);
         if (!validationResult.IsValid)
         {
-            return new BadRequestResult<string>(validationResult.Errors);
+            throw new ApiException(HttpStatusCode.BadRequest, "Validation Errors", validationResult.Errors);
         }
         await _dishRepository.AddNewDish(dish.MapDishAddRequest());
-        return new SuccessResult<string>(null);
     }
 
-    public async Task<Result<string>> ChangeDish(PutDishRequest dish)
+    public async Task ChangeDish(PutDishRequest dishChange)
     {
-        var validationResult = await new PutDishValidator().ValidateAsync(dish);
+        var validationResult = await new PutDishValidator().ValidateAsync(dishChange);
         if (!validationResult.IsValid)
         {
-            return new BadRequestResult<string>(validationResult.Errors);
+            throw new ApiException(HttpStatusCode.BadRequest, "Validation Errors", validationResult.Errors);
         }
-        await _dishRepository.ChangeDish(dish.MapDishPutRequest());
-        return new SuccessResult<string>(null);
+
+        var dish = await _dishRepository.GetDishById(dishChange.Id);
+        await _dishRepository.ChangeDish(dishChange.MapDishPutRequest(dish));
     }
 
-    public async Task<Result<string>> DeleteById(int id)
+    public async Task DeleteById(int id)
     {
         var result = await _dishRepository.DeleteDishById(id);
 
         if (result)
         {
-            return new BadRequestResult<string>("Error in delete dish.");
+            throw new ApiException(HttpStatusCode.BadRequest, "Error in delete dish.");
         }
-        
-        return new SuccessResult<string>(null);
     }
 }

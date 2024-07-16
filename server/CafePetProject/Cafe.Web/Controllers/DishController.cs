@@ -1,9 +1,6 @@
-﻿using Cafe.Application.DTOs.DishDTOs.Request;
-using Cafe.Web.Helper;
-using Cafe.Application.Services.Inteface;
-using Cafe.Domain;
-using Cafe.Web.Attribute;
-using Microsoft.AspNetCore.Authorization;
+﻿using Cafe.Application.DTO.DishDTOs.Request;
+using Cafe.Application.DTOs.DishDTOs.Request;
+using Cafe.Application.Services.External.Interface;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cafe.Web.Controllers;
@@ -21,34 +18,34 @@ public class DishController : BaseApiController
     public async Task<IActionResult> GetAllDish()
     {
         var result = await _dishService.GetAllDish();
-        return this.GetResponse(result);
+        return Ok(result);
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetDishById(int id, string test, string testing)
+    public async Task<IActionResult> GetDishById(int id)
     {
         var result = await _dishService.GetDishById(id);
-        return this.GetResponse(result);
+        return Ok(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> AddNewDish([FromBody] AddDishRequest dish)
     {
-        var result = await _dishService.AddNewDish(dish);
-        return this.GetResponse(result);    
+        await _dishService.AddNewDish(dish);
+        return NoContent();    
     }
 
     [HttpPut]
     public async Task<IActionResult> ChangeDish([FromBody] PutDishRequest dish)
     {
-        var result = await _dishService.ChangeDish(dish);
-        return this.GetResponse(result);
+        await _dishService.ChangeDish(dish);
+        return NoContent();
     }
 
     [HttpDelete]
     public async Task<IActionResult> DeleteById(int id)
     {
-        var result = await _dishService.DeleteById(id);
-        return this.GetResponse(result);
+        await _dishService.DeleteById(id);
+        return NoContent();
     }
 }

@@ -1,11 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // або будь-яке інше зберігання, яке ви вибрали
+import storage from "redux-persist/lib/storage";
 
 const initialState = {
-  user: null,
+  userName: null,
   accessToken: null,
-  refreshToken: null,
+  role: null,
 };
 
 const authSlice = createSlice({
@@ -13,22 +13,22 @@ const authSlice = createSlice({
   initialState: initialState,
   reducers: {
     setCredentials: (state, actions) => {
-      const { accessToken, refreshToken, userName } = actions.payload;
-      state.user = userName;
+      const { accessToken, userName, role } = actions.payload;
+      state.userName = userName;
       state.accessToken = accessToken;
-      state.refreshToken = refreshToken;
+      state.role = role;
     },
     logOut: (state) => {
-      state.user = null;
+      state.userName = null;
       state.accessToken = null;
-      state.refreshToken = null;
+      state.role = null;
     },
   },
 });
 
-export const selectCurrentUser = (state) => state.auth.user;
+export const selectCurrentUserName = (state) => state.auth.userName;
 export const selectCurrentAccessToken = (state) => state.auth.accessToken;
-export const selectCurrentRefreshToken = (state) => state.auth.refreshToken;
+export const selectCurrentRole = (state) => state.auth.role;
 
 export const { setCredentials, logOut } = authSlice.actions;
 
@@ -36,7 +36,7 @@ const authReducer = persistReducer(
   {
     key: "auth",
     storage: storage,
-    whitelist: ["user", "accessToken", "refreshToken"], // Список ключів, які ви хочете зберегти
+    whitelist: ["userName", "accessToken", "role"],
   },
   authSlice.reducer,
 );

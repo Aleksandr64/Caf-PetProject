@@ -7,7 +7,7 @@ namespace Cafe.Application.Mappers;
 
 public static class OrderMapper
 {
-    public static Order MapOrderAddRequest(this AddOrderRequest addOrderRequest, string? userName)
+    public static Order MapOrderAddRequest(this AddOrderRequest addOrderRequest)
     {
         
         Order order = new Order
@@ -16,8 +16,10 @@ public static class OrderMapper
             PhoneNumber = addOrderRequest.PhoneNumber,
             Address = addOrderRequest.Address,
             EmailAddres = addOrderRequest.EmailAddress,
-            UserName = userName,
+            UserName = addOrderRequest.UserName,
             TotalAmount = addOrderRequest.TotalAmount,
+            DateCreate = DateTime.UtcNow,
+            DateUpdate = DateTime.UtcNow,
             OrderItems = new List<OrderItem>()
         };
         order.OrderItems = MapOrderItemsAddRequest(addOrderRequest.OrderItems, order.Id);
@@ -33,8 +35,9 @@ public static class OrderMapper
             {
                 Quantity = addOrderItem.Quantity,
                 DishId = addOrderItem.DishId,
-                OrderId = Id
-                
+                OrderId = Id,
+                DateCreate = DateTime.UtcNow,
+                DateUpdate = DateTime.UtcNow
             };
             orderItems.Add(orderItem);
         }

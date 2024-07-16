@@ -1,9 +1,10 @@
 ﻿using Cafe.Domain;
 using Cafe.Infrastructure.Context;
+using Cafe.Infrastructure.Repository.Interface;
 using Cafe.Infrustructure.Repositoriy.Interface;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cafe.Infrustructure.Repositoriy;
+namespace Cafe.Infrastructure.Repository;
 
 public class DishRepository : IDishRepository
 {

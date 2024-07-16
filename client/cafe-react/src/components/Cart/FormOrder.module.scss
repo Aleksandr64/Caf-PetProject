@@ -1,19 +1,25 @@
-.formOrder{
-  h2{
+.formOrder {
+  h2 {
     margin: 0;
     font-size: 48px;
     font-weight: 500;
     padding: 10px 0;
   }
-  label{
+
+  label {
     padding-top: 20px;
     margin-left: 5px;
     font-weight: bold;
   }
 }
 
-.boxWrapper{
-  padding: 10px;
+.totalAmount{
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 15px 1px;
+}
+
+.boxWrapper {
   display: flex;
   justify-content: center;
 }

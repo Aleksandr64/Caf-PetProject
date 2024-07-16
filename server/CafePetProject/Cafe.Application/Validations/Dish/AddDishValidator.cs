@@ -1,4 +1,5 @@
-﻿using Cafe.Application.DTOs.DishDTOs.Request;
+﻿using Cafe.Application.DTO.DishDTOs.Request;
+using Cafe.Application.DTOs.DishDTOs.Request;
 using FluentValidation;
 
 namespace Cafe.Application.Validations;

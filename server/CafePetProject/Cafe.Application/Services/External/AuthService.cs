@@ -1,21 +1,22 @@
-﻿using System.Security.Claims;
+﻿using System.Net;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Cafe.Application.DTOs.UserDTOs;
 using Cafe.Application.DTOs.UserDTOs.Request;
 using Cafe.Application.DTOs.UserDTOs.Response;
 using Cafe.Application.Mappers;
-using Cafe.Application.Services.Inteface;
+using Cafe.Application.Services.External.Interface;
 using Cafe.Application.Services.Internal.Interface;
 using Cafe.Application.Validations.Auth;
 using Cafe.Domain;
-using Cafe.Domain.ResultModels;
+using Cafe.Domain.Constant;
+using Cafe.Domain.Exceptions;
 using Cafe.Infrastructure.Repository.Interface;
-using Cafe.Infrustructure.Repositoriy.Interface;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Cafe.Application.Services.External;
 
-//TODO Authorization on more device
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _userRepository;
@@ -30,158 +31,129 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
-    public async Task<Result<TokenResponse>> LoginUser(UserLoginRequest loginRequest)
+    public async Task<TokenResponse> LoginUser(UserLoginRequest loginRequest)
     {
         var validationResult = await new LoginValidator().ValidateAsync(loginRequest);
         if (!validationResult.IsValid)
         {
-            return new BadRequestResult<TokenResponse>(validationResult.Errors);
+            throw new ApiException(HttpStatusCode.BadRequest, "Validation Errors", validationResult.Errors);
         }
         
         var user = await _userRepository.FindByNameAsync(loginRequest.UserName);
 
         if (user == null)
         {
-            return new BadRequestResult<TokenResponse>("UserName or Password incorrect!");
+            throw new ApiException(HttpStatusCode.BadRequest, "UserName or Password incorrect!");
         }
 
         var userPasswordCheck = VerifyPassword(loginRequest.Password, user.PasswordHash, user.PasswordSalt);
 
         if (!userPasswordCheck)
         {
-            return new BadRequestResult<TokenResponse>("UserName or Password incorrect!");
+            throw new ApiException(HttpStatusCode.BadRequest, "UserName or Password incorrect!");
         }
 
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Role, user.Role)
+            new Claim("userName", user.UserName),
+            new Claim("role", user.Role)
         };
 
         var accessToken = _tokenService.GenerateAccessToken(authClaims);
         var refreshToken = _tokenService.GenerateRefreshToken();
+        
+        var userToken = new Token()
+        {
+            RefreshToken = refreshToken,
+            RefreshTokenExpiredTime = DateTime.UtcNow.AddDays(7),
+            DateCreate = DateTime.UtcNow,
+            DateUpdate = DateTime.UtcNow,
+            UserId = user.Id
+        };
 
-        var userRefreshToken = await _tokenRepository.FindTokenEntityByUserNameAsync(user.UserName);
+        await _tokenRepository.AddToken(userToken);
 
-        userRefreshToken.RefreshToken = refreshToken;
-        userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-
-        await _tokenRepository.ChangeRefreshToken(userRefreshToken);
-
-        return new SuccessResult<TokenResponse>(new TokenResponse
+        return new TokenResponse
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken
-        });
+        };
     }
     
-    public async Task<Result<string>> RegisterUser(RegisterUserRequest userRegistration)
+    public async Task RegisterUser(RegisterUserRequest userRegistration)
     {
         var validationResult = await new RegistrationValidator().ValidateAsync(userRegistration);
         if (!validationResult.IsValid)
         {
-            return new BadRequestResult<string>(validationResult.Errors);
+            throw new ApiException(HttpStatusCode.BadRequest, "Validation Errors", validationResult.Errors);
         }
         
         var userNameCheck = await _userRepository.CheckByNameAsync(userRegistration.UserName);
 
         if (userNameCheck)
         {
-            return new BadRequestResult<string>("A User with such a Username exists.");
+            throw new ApiException(HttpStatusCode.BadRequest, "A User with such a Username exists.");
         }
 
         var emailCheck = await _userRepository.CheckByEmailAsync(userRegistration.Email);
 
         if (emailCheck)
         {
-            return new BadRequestResult<string>("A User with such a Email exists.");
+            throw new ApiException(HttpStatusCode.BadRequest, "A User with such a Email exists.");
         }
 
         var password = HashPasswordCreate(userRegistration.Password);
 
-        var user = userRegistration.MapUserRequest(password, UserRolesEnum.User);
+        var user = userRegistration.MapUserRequest(password, UserRoles.User);
 
         await _userRepository.CreateUserAsync(user);
-
-        await _tokenRepository.CreateTokenEntity(new Token
-        {
-            UserName = user.UserName
-        });
-        
-        return new SuccessResult<string>(null);
     }
 
-    public async Task<Result<TokenResponse>> GetNewAccessToken(TokenRequest tokenRequest)
+    public async Task<TokenResponse> GetNewAccessToken(string refreshToken)
     {
-        string accessToken = tokenRequest.AccessToken;
-        string refreshToken = tokenRequest.RefreshToken;
+        var token = await _tokenRepository.FindTokenByRefreshToken(refreshToken);
 
-        var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-
-        if (principal == null)
+        if (token == null)
         {
-            return new BadRequestResult<TokenResponse>("Invalid Token");
-        }
-
-        var userName = _tokenService.GetUsernameFromToken(principal);
-        var userRefreshToken = await _tokenRepository.FindTokenEntityByUserNameAsync(userName);
-
-        if (userRefreshToken == null)
-        {
-            return new NotFoundResult<TokenResponse>("User not found!");
+            throw new ApiException(HttpStatusCode.Unauthorized, "Token has Expired.");
         }
         
-        if (userRefreshToken.RefreshToken != refreshToken || userRefreshToken.RefreshTokenExpiryTime <= DateTime.UtcNow)
+        if (token.RefreshTokenExpiredTime <= DateTime.UtcNow)
         {
-            await LogoutOperation(principal);
-            return new UnAuthorizedResult<TokenResponse>("The Refresh token has expired");
+            await _tokenRepository.DeleteTokenByRefreshToken(refreshToken);
+            throw new ApiException(HttpStatusCode.Unauthorized, "Token has Expired.");
         }
+
+        var user = await _userRepository.FindUserById(token.UserId);
         
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Name, _tokenService.GetUsernameFromToken(principal)),
-            new Claim(ClaimTypes.Role, _tokenService.GetRoleFromToken(principal))
+            new Claim("userName", user.UserName),
+            new Claim("role", user.Role)
         };
 
         var newAccessToken = _tokenService.GenerateAccessToken(authClaims);
         var newRefreshToken = _tokenService.GenerateRefreshToken();
         
-        userRefreshToken.RefreshToken = newRefreshToken;
-        userRefreshToken.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+        token.RefreshToken = newRefreshToken;
+        token.RefreshTokenExpiredTime = DateTime.UtcNow.AddDays(7);
+
+        await _tokenRepository.UpdateRefreshToken(token);
         
-        await _tokenRepository.ChangeRefreshToken(userRefreshToken);
-        
-        return new SuccessResult<TokenResponse>(new TokenResponse
+        return new TokenResponse
         {
             AccessToken = newAccessToken,
             RefreshToken = newRefreshToken
-        });
+        };
     }
 
-    public async Task<Result<string>> Logout(string accessToken)
+    public async Task Logout(string refreshToken)
     {
-        var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-
-        if (principal == null)
+        if (refreshToken.IsNullOrEmpty())
         {
-            return new NotFoundResult<string>("Invalid Principal Token");
+            throw new ApiException(HttpStatusCode.Unauthorized, "Refresh token don't exist");
         }
-        
-        await LogoutOperation(principal);
-
-        return new SuccessResult<string>(null);
-    }
-
-    private async Task LogoutOperation(ClaimsPrincipal principal)
-    {
-        var userName = _tokenService.GetUsernameFromToken(principal);
-
-        var token = await _tokenRepository.FindTokenEntityByUserNameAsync(userName);
-
-        token.RefreshToken = string.Empty;
-        token.RefreshTokenExpiryTime = default;
-
-        await _tokenRepository.ChangeRefreshToken(token);
+        await _tokenRepository.DeleteTokenByRefreshToken(refreshToken);
     }
     
     private static Password HashPasswordCreate(string password)

@@ -1,6 +1,6 @@
 ﻿using Cafe.Domain;
 
-namespace Cafe.Infrustructure.Repositoriy.Interface;
+namespace Cafe.Infrastructure.Repository.Interface;
 
 public interface IDishRepository
 {

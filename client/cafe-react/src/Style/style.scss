@@ -1,3 +1,17 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  monospace;
+}
+
 .colorButton {
   width: 100%;
   padding: 15px;
@@ -43,7 +57,13 @@
 }
 
 .container{
-  padding: 20px;
+  padding: 20px 10%;
+}
+
+@media (max-width: 500px) {
+  .container{
+    padding: 0;
+  }
 }
 
 .formField {
@@ -51,7 +71,7 @@
 
   .input{
     width: 100%;
-    padding: 20px;
+    padding: 10px 20px;
     margin: 8px 0 15px 0;
     box-sizing: border-box;
     border: 1px solid gray;
@@ -77,4 +97,45 @@
       padding: 0;
     }
   }
+}
+
+.counter-button {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 5px;
+
+  button {
+    background-color: #fff;
+    border: none;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .count {
+    width: 20px;
+    text-align: center;
+    font-size: 14px;
+    margin: 10px 10px;
+  }
+}
+
+.ellipsis-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

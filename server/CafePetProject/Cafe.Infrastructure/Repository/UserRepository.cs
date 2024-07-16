@@ -1,10 +1,9 @@
 ﻿using Cafe.Domain;
 using Cafe.Infrastructure.Context;
 using Cafe.Infrastructure.Repository.Interface;
-using Cafe.Infrustructure.Context;
 using Microsoft.EntityFrameworkCore;
 
-namespace Cafe.Infrustructure.Repositoriy;
+namespace Cafe.Infrastructure.Repository;
 
 public class UserRepository : IUserRepository
 {
@@ -30,13 +29,20 @@ public class UserRepository : IUserRepository
         var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == userName);
         return user;
     }
+
+    public async Task<User> FindUserById(int id)
+    {
+        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+        return user;
+    }
+    
     public async Task CreateUserAsync(User user)
     {
         await _dbContext.Users.AddAsync(user);
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task ChangeUserAsync(User user)
+    public async Task UpdateUserAsync(User user)
     {
         _dbContext.Users.Update(user);
         await _dbContext.SaveChangesAsync();

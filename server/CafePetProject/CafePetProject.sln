@@ -1,12 +1,12 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Web", "Cafe.Web\Cafe.Web.csproj", "{E84A8D47-CAB5-4F6A-AF0D-C9AFE23A87A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cafe.Web", "Cafe.Web\Cafe.Web.csproj", "{E84A8D47-CAB5-4F6A-AF0D-C9AFE23A87A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Application", "Cafe.Application\Cafe.Application.csproj", "{E2CB23DB-AAEB-497D-8038-C15F4509FB31}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cafe.Application", "Cafe.Application\Cafe.Application.csproj", "{E2CB23DB-AAEB-497D-8038-C15F4509FB31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Infrastructure", "Cafe.Infrastructure\Cafe.Infrastructure.csproj", "{41183BAC-EDC6-4A25-9D11-C27CAADA3AB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cafe.Infrastructure", "Cafe.Infrastructure\Cafe.Infrastructure.csproj", "{41183BAC-EDC6-4A25-9D11-C27CAADA3AB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cafe.Domain", "Cafe.Domain\Cafe.Domain.csproj", "{6189B0B4-E426-40FB-AA6C-9E8980355A48}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cafe.Domain", "Cafe.Domain\Cafe.Domain.csproj", "{6189B0B4-E426-40FB-AA6C-9E8980355A48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

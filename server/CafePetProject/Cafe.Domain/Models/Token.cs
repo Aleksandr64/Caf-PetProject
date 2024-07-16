@@ -2,11 +2,11 @@
 
 namespace Cafe.Domain;
 
-public class Token
+public class Token : BaseEntity
 {
-    [Key]
-    public int Id { get; set; }
-    public string UserName { get; set; } = string.Empty;
-    public string RefreshToken { get; set; } = string.Empty;
-    public DateTime RefreshTokenExpiryTime { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiredTime { get; set; }
+
+    public int UserId { get; set; }
+    public User User { get; set; }
 }

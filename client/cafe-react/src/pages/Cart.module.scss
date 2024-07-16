@@ -1,5 +1,11 @@
-.container{
+.container {
   padding: 0 5%;
+
+  h1{
+    font-size: 4.5vh;
+    text-align: center;
+  }
+
   .gridContainer {
     display: grid;
     gap: 10px 100px;
@@ -9,6 +15,7 @@
 @media (min-width: 1050px) {
   .gridContainer {
     grid-template-columns:  1fr 2fr;
+
     .item1 {
       order: 1;
     }
@@ -21,12 +28,14 @@
 }
 
 @media (max-width: 1050px) {
-  .container{
+  .container {
     .gridContainer {
       grid-template-columns: repeat(1, 1fr);
+
       .item1 {
         order: 2;
       }
+
       .item2 {
         order: 1;
       }

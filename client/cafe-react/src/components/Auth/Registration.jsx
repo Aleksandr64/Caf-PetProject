@@ -1,10 +1,10 @@
 import React from "react";
-import { useRegistrationMutation } from "../../redux/API/authApiSlice";
 import { useNavigate } from "react-router-dom";
-import '../../Style/style.scss';
+import "../../Style/style.scss";
 import styles from "./Registration.module.scss";
 import { MdVisibility } from "react-icons/md";
 import { MdVisibilityOff } from "react-icons/md";
+import api from "../../API/apiConfig";
 
 const Registration = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -16,19 +16,18 @@ const Registration = () => {
   const [phoneNumber, setPhoneNumber] = React.useState("");
 
   const navigate = useNavigate();
-  const [registration, { isLoading }] = useRegistrationMutation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await registration({
+      await api.post("Auth/RegisterUser", {
         firstName,
         lastName,
         userName,
         password,
         email,
         phoneNumber,
-      }).unwrap();
+      });
       setPassword("");
       navigate("/login");
     } catch (err) {
@@ -55,91 +54,89 @@ const Registration = () => {
 
   const content = (
     <>
-    {isLoading ? (
-      <h1>Loading...</h1>
-    ) : (
-      <>
-        <div className={styles.gridContainer}>
-          <p className={styles.signUpTitle}>
-            Sign Up
-          </p>
-          <form onSubmit={handleSubmit} className={styles.formContainer}>
-            <div className="formField">
-              <input
-                className="input"
-                type="text"
-                id="firstName"
-                placeholder="First Name"
-                onChange={handleFirstNameInput}
-                required
-              />
-            </div>
-            <div className="formField">
-              <input
-                className="input"
-                type="text"
-                id="lastName"
-                placeholder="Last Name"
-                onChange={handleLastNameInput}
-                required
-              />
-            </div>
-            <div className="formField">
-              <input
-                className="input"
-                type="text"
-                id="userName"
-                placeholder="UserName"
-                onChange={handleUserNameInput}
-                required
-              />
-            </div>
-            <div className="formField">
-              <input
-                className="input"
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Password"
-                onChange={handlePwdInput}
-                required
-              />
-              <button type="button" className="roundButton" onClick={togglePasswordVisibility}>
-                {showPassword ? <MdVisibility className="iconButton"/> : <MdVisibilityOff className="iconButton"/>}
-              </button>
-            </div>
-            <div className="formField">
-              <input
-                className="input"
-                type="email"
-                id="email"
-                placeholder="Email"
-                onChange={handleEmailInput}
-                required
-              />
-            </div>
-            <div className="formField">
-              <input
-                className="input"
-                type="tel"
-                id="phoneNumber"
-                placeholder="Phone Number"
-                onChange={handlePhoneNumberInput}
-                required
-              />
-            </div>
-            <div className={styles.buttonField}>
-              <button type="submit" className="colorButton">
-                Sign Up
-              </button>
-            </div>
-          </form>
-        </div>
-      </>
-    )
-    }
+      <div className={styles.gridContainer}>
+        <p className={styles.signUpTitle}>Sign Up</p>
+        <form onSubmit={handleSubmit} className={styles.formContainer}>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type="text"
+              id="firstName"
+              placeholder="First Name"
+              onChange={handleFirstNameInput}
+              required
+            />
+          </div>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type="text"
+              id="lastName"
+              placeholder="Last Name"
+              onChange={handleLastNameInput}
+              required
+            />
+          </div>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type="text"
+              id="userName"
+              placeholder="UserName"
+              onChange={handleUserNameInput}
+              required
+            />
+          </div>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type={showPassword ? "text" : "password"}
+              id="password"
+              placeholder="Password"
+              onChange={handlePwdInput}
+              required
+            />
+            <button
+              type="button"
+              className="roundButton"
+              onClick={togglePasswordVisibility}
+            >
+              {showPassword ? (
+                <MdVisibility className="iconButton" />
+              ) : (
+                <MdVisibilityOff className="iconButton" />
+              )}
+            </button>
+          </div>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type="email"
+              id="email"
+              placeholder="Email"
+              onChange={handleEmailInput}
+              required
+            />
+          </div>
+          <div className="formField">
+            <input
+              className={`input ${styles.input}`}
+              type="tel"
+              id="phoneNumber"
+              placeholder="Phone Number"
+              onChange={handlePhoneNumberInput}
+              required
+            />
+          </div>
+          <div className={styles.buttonField}>
+            <button type="submit" className="colorButton">
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
     </>
-    )
-  ;
+  );
   return content;
 };
 

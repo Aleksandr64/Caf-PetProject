@@ -1,4 +1,5 @@
-﻿using Cafe.Application.DTOs.DishDTOs.Request;
+﻿using Cafe.Application.DTO.DishDTOs.Request;
+using Cafe.Application.DTOs.DishDTOs.Request;
 using Cafe.Domain;
 
 namespace Cafe.Application.Mappers;
@@ -12,20 +13,19 @@ public static class DishMapper
             Title = addDish.Title,
             Description = addDish.Description,
             Price = addDish.Price,
-            ImageUrl = addDish.ImageUrl
+            ImageUrl = addDish.ImageUrl,
+            DateCreate = DateTime.UtcNow,
+            DateUpdate = DateTime.UtcNow
         };
     }
 
-    public static Dish MapDishPutRequest(this PutDishRequest putDish)
+    public static Dish MapDishPutRequest(this PutDishRequest putDish, Dish dish)
     {
-        return new Dish
-        {
-            Id = putDish.Id,
-            Title = putDish.Title,
-            Description = putDish.Description,
-            Price = putDish.Price,
-            ImageUrl = putDish.ImageUrl,
-            DateUpdate = DateTime.UtcNow
-        };
+        dish.Title = putDish.Title;
+        dish.Description = putDish.Description;
+        dish.Price = putDish.Price;
+        dish.ImageUrl = putDish.ImageUrl;
+        dish.DateUpdate = DateTime.UtcNow;
+        return dish;
     }
 }

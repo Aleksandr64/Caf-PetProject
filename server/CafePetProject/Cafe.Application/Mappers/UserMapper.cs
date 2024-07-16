@@ -7,7 +7,7 @@ namespace Cafe.Application.Mappers;
 
 public static class UserMapper
 {
-    public static User MapUserRequest(this RegisterUserRequest userRequest, Password password, UserRolesEnum userRoles)
+    public static User MapUserRequest(this RegisterUserRequest userRequest, Password password, string userRole)
     {
         return new User
         {
@@ -18,7 +18,9 @@ public static class UserMapper
             PhoneNumber = userRequest.PhoneNumber,
             PasswordHash = password.hashPassword,
             PasswordSalt = password.saltPassword,
-            Role = userRoles.ToString(),
+            Role = userRole,
+            DateCreate = DateTime.UtcNow,
+            DateUpdate = DateTime.UtcNow
         };
     }
 
@@ -32,4 +34,14 @@ public static class UserMapper
             PhoneNumber = user.PhoneNumber
         };
     }
+
+    public static User MapChangeUserToUser(this ChangeUserDataRequest userDataRequest, User user)
+    {
+        user.FirstName = userDataRequest.FirstName;
+        user.LastName = userDataRequest.LastName;
+        user.Email = userDataRequest.Email;
+        user.PhoneNumber = userDataRequest.PhoneNumber;
+        return user;
+    }
+
 }

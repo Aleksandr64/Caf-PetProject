@@ -6,7 +6,8 @@ const initialState = {
   customerName: "",
   phoneNumber: "",
   address: "",
-  emailAddress: "", // Виправлення помилки в імені властивості
+  emailAddress: "",
+  userName: null,
   totalAmount: 0,
   orderItems: [],
 };
@@ -17,7 +18,6 @@ export const cartSlice = createSlice({
   reducers: {
     addDish: (state, action) => {
       const { dishId, price } = action.payload;
-      console.log(dishId, price);
       const existingItem = state.orderItems.find(
         (item) => item.dishId === dishId,
       );
@@ -27,6 +27,21 @@ export const cartSlice = createSlice({
         state.orderItems.push({ dishId: dishId, quantity: 1 });
       }
       state.totalAmount += price;
+    },
+    deleteDish: (state, action) => {
+      const { dishId, price } = action.payload;
+      const existingItemIndex = state.orderItems.findIndex(
+        (item) => item.dishId === dishId,
+      );
+      if (existingItemIndex !== -1) {
+        const existingItem = state.orderItems[existingItemIndex];
+        if (existingItem.quantity > 1) {
+          existingItem.quantity -= 1;
+        } else {
+          state.orderItems.splice(existingItemIndex, 1);
+        }
+        state.totalAmount -= price;
+      }
     },
     setInputValue: (state, action) => {
       const { propertyName, value } = action.payload;
@@ -39,23 +54,19 @@ export const cartSlice = createSlice({
       state.emailAddress = "";
       state.totalAmount = 0;
       state.orderItems = [];
-    }
+    },
   },
 });
-export const {
-  addDish,
-  setInputValue,
-  resetCart
-} = cartSlice.actions;
+export const { addDish, deleteDish, setInputValue, resetCart } =
+  cartSlice.actions;
 
 const cartReducer = persistReducer(
   {
     key: "cart",
     storage: storage,
-    whitelist: ["totalAmount", "orderItems"], // Список ключів, які ви хочете зберегти
+    whitelist: ["totalAmount", "orderItems", "userName"], // Список ключів, які ви хочете зберегти
   },
   cartSlice.reducer,
 );
 
 export default cartReducer;
-

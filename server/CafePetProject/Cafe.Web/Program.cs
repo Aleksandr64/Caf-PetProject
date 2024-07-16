@@ -3,22 +3,19 @@ using Cafe.Infrustructure.Repositoriy;
 using Cafe.Infrustructure.Repositoriy.Interface;
 using Cafe.Application.Services.External;
 using Cafe.Application.Services.External.Interface;
-using Cafe.Application.Services.Inteface;
 using Cafe.Application.Services.Internal;
 using Cafe.Application.Services.Internal.Interface;
 using Cafe.Infrastructure.Context;
 using Cafe.Infrastructure.Repository;
 using Cafe.Infrastructure.Repository.Interface;
-using Cafe.Web.Middleware;
+using Cafe.Web.Middleware.Exceptions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-// Add services to the container.
 builder.Services.AddDbContext<CafeDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("WebApiDatabase"));
@@ -39,6 +36,7 @@ builder.Services
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
             ValidAudience = builder.Configuration["Jwt:Audience"],
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
@@ -48,55 +46,57 @@ builder.Services
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
         {
-            policy.WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
+            builder.WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyHeader()
+                .AllowCredentials(); 
         });
 });
 
 builder.Services.AddScoped<IDishService, DishService>();
-builder.Services.AddScoped<IDishRepository, DishRepository>();
-builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDishRepository, DishRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddTransient<ITokenService, TokenService>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(opt =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-    // Додайте JWT аутентифікацію схеми
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    opt.SwaggerDoc("v1", new OpenApiInfo { Title = "MyAPI", Version = "v1" });
+    opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Bearer {token}\"",
-        Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Description = "Please enter token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "bearer"
     });
 
-    // Додайте JWT аутентифікацію в оператори безпеки
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    opt.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
             new OpenApiSecurityScheme
             {
                 Reference = new OpenApiReference
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
                 }
             },
-            new string[] {}
+            new string[]{}
         }
     });
 });
@@ -120,10 +120,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseExceptionHandler();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
-app.UseMiddleware<AuthorizationMiddleware>();
+app.UseAuthorization();
 
 app.MapControllers();
 

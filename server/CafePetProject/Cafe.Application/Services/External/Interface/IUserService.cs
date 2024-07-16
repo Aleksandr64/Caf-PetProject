@@ -1,9 +1,10 @@
-﻿using Cafe.Application.DTOs.UserDTOs.Response;
-using Cafe.Domain.ResultModels;
+﻿using Cafe.Application.DTOs.UserDTOs.Request;
+using Cafe.Application.DTOs.UserDTOs.Response;
 
 namespace Cafe.Application.Services.External.Interface;
 
 public interface IUserService
 {
-    public Task<Result<UserDataResponse>> GetUserByName(string userName);
+    public Task<UserDataResponse> GetUserByName(string? userName);
+    public Task<UserDataResponse> ChangeUserData(ChangeUserDataRequest changeUserDate, string userName);
 }

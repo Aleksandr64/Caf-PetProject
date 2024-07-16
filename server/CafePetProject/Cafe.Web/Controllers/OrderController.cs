@@ -1,6 +1,5 @@
-﻿using Cafe.Web.Helper;
-using Cafe.Application.DTOs.OrderDTOs.Request;
-using Cafe.Application.Services.Inteface;
+﻿using Cafe.Application.DTOs.OrderDTOs.Request;
+using Cafe.Application.Services.External.Interface;
 using Cafe.Web.Attribute;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,18 +15,25 @@ public class OrderController : BaseApiController
     }
 
     [HttpGet]
-    [UserNameInjection]
-    public async Task<IActionResult> GetAllUserOrder(string? userName, int page, int pageSize)
+    public async Task<IActionResult> GetAllUserOrderByUserName(string userName, int page, int pageSize)
     {
         var result = await _orderService.GetOrderByUserName(userName, page, pageSize);
-        return this.GetResponse(result);
+        return Ok(result);
+    }
+    
+    [HttpGet]
+    [InjectUserName]
+    public async Task<IActionResult> GetAllUserOrder(int page, int pageSize)
+    {
+        var userName = HttpContext.Items["userName"] as string;
+        var result = await _orderService.GetOrderByUserName(userName, page, pageSize);
+        return Ok(result);
     }
     
     [HttpPost]
-    [UserNameInjection]
-    public async Task<IActionResult> AddNewOrder([FromBody] AddOrderRequest newOrder, string? userName)
+    public async Task<IActionResult> AddNewOrder([FromBody] AddOrderRequest newOrder)
     {
-        var result = await _orderService.AddNewOrder(newOrder, userName);
-        return this.GetResponse(result);
+        await _orderService.AddNewOrder(newOrder);
+        return NoContent();
     }
 }

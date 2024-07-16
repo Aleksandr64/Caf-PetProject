@@ -1,10 +1,12 @@
 ﻿using Cafe.Domain;
 
-namespace Cafe.Infrustructure.Repositoriy.Interface;
+namespace Cafe.Infrastructure.Repository.Interface;
 
 public interface ITokenRepository
 {
-    public Task CreateTokenEntity(Token tokenEntity);
-    public Task<Token> FindTokenEntityByUserNameAsync(string userName);
-    public Task ChangeRefreshToken(Token token);
+    public Task AddToken(Token token);
+    public Task<Token> FindTokenByUser(int userId);
+    public Task<Token> FindTokenByRefreshToken(string refreshToken);
+    public Task UpdateRefreshToken(Token token);
+    public Task DeleteTokenByRefreshToken(string refreshToken);
 }

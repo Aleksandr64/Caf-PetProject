@@ -2,9 +2,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 19px;
+  margin-top: 10vh;
+  justify-content: center;
 
-  svg{
+  svg {
     color: #FF8C00;
     font-size: 40px;
   }
@@ -19,21 +20,28 @@
     width: 500px;
     padding: 10px;
 
+    .input{
+      padding: 20px;
+    }
+
     .buttonField {
       display: flex;
       justify-content: center;
     }
   }
-  .linkForm{
+
+  .linkForm {
     width: 500px;
     display: flex;
     justify-content: space-between;
     padding-left: 6px;
-    a{
+
+    a {
       color: #0072c7;
       text-decoration: none;
       transition: text-decoration 0.3s ease;
-      &:hover{
+
+      &:hover {
         text-decoration: underline;
       }
     }
@@ -41,11 +49,12 @@
 }
 
 @media (max-width: 702px) {
-  .gridContainer{
-    .formContainer{
+  .gridContainer {
+    .formContainer {
       width: 90%;
     }
-    .linkForm{
+
+    .linkForm {
       width: 90%;
     }
   }

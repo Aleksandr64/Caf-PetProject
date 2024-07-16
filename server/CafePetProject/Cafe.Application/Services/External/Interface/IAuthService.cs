@@ -1,14 +1,12 @@
 ﻿using Cafe.Application.DTOs.UserDTOs.Request;
 using Cafe.Application.DTOs.UserDTOs.Response;
-using Cafe.Domain;
-using Cafe.Domain.ResultModels;
 
-namespace Cafe.Application.Services.Inteface;
+namespace Cafe.Application.Services.External.Interface;
 
 public interface IAuthService
 {
-    public Task<Result<string>> RegisterUser(RegisterUserRequest user);
-    public Task<Result<TokenResponse>> LoginUser(UserLoginRequest loginRequest);
-    public Task<Result<TokenResponse>> GetNewAccessToken(TokenRequest tokenRequest);
-    public Task<Result<string>> Logout(string accessToken);
+    public Task RegisterUser(RegisterUserRequest user);
+    public Task<TokenResponse> LoginUser(UserLoginRequest loginRequest);
+    public Task<TokenResponse> GetNewAccessToken(string refreshToken);
+    public Task Logout(string refreshToken);
 }

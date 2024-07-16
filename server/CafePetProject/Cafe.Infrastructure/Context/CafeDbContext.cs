@@ -1,7 +1,5 @@
 ﻿using Cafe.Domain;
-using Cafe.Infrustructure.Context.Configurations;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Cafe.Infrastructure.Context;
 
@@ -12,9 +10,13 @@ public class CafeDbContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.UseCollation("SQL_Latin1_General_CP1_CS_AS");
-        modelBuilder.ApplyConfiguration(new OrderConfiguration());
-        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.AddDishMapping();
+        modelBuilder.AddOrderMapping();
+        modelBuilder.AddOrderItemMapping();
+        modelBuilder.AddTokenMapping();
+        modelBuilder.AddUserMapping();
     }
     
     public DbSet<Dish> Dishes { get; set; }

@@ -1,4 +1,4 @@
-﻿namespace Cafe.Domain;
+﻿namespace Cafe.Domain.Constant;
 
 public static class HttpContextItems
 {

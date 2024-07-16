@@ -1,4 +1,5 @@
 ﻿using Cafe.Web.Attribute;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cafe.Web.Controllers;
@@ -8,13 +9,14 @@ public class TestController : BaseApiController
     [HttpGet]
     public IActionResult FirstTestEndPoint()
     {
-        return Ok(new { message = "End point work!" });
+        var userAgent = Request.Headers["User-Agent"].ToString();
+        return Ok(new { message = userAgent });
     }
 
 
     [HttpGet]
-    [AuthorizationRole]
-    [UserNameInjection]
+    [Authorize]
+    [InjectUserName]
     public IActionResult TestAuthAttribute(string? userName)
     {
         return Ok(new { message = $"User: {userName}  Authorize!" });
